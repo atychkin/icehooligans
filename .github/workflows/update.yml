@@ -1,0 +1,41 @@
+name: Обновление статистики
+
+on:
+  schedule:
+    - cron: "0 21 * * *"   # 21:00 UTC = 00:00 по Москве
+  workflow_dispatch:        # кнопка «запустить сейчас» во вкладке Actions
+  push:
+    branches: [main]
+    paths: ["src/head.html", "src/app.js", "build/**"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-site
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Собрать страницу со свежими данными
+        run: node build/build.mjs
+
+      - name: Закоммитить, если что-то изменилось
+        run: |
+          if [ -z "$(git status --porcelain index.html src/data.js)" ]; then
+            echo "Изменений нет — коммит не нужен"
+            exit 0
+          fi
+          git config user.name "ice-hooligans-bot"
+          git config user.email "actions@github.com"
+          git add index.html src/data.js
+          git commit -m "Статистика на $(date -u -d '+3 hours' '+%d.%m.%Y')"
+          git push
