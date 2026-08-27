@@ -154,6 +154,21 @@ tr.me td{background:rgba(225,29,46,.10);font-weight:700}
 .tl h4{font-size:19px}
 .tl .y{color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em}
 
+/* тренерские эпохи */
+.coaches{display:grid;gap:10px;margin-top:4px}
+.crow{display:grid;grid-template-columns:120px 1fr auto;gap:18px;align-items:center;
+  background:linear-gradient(90deg,rgba(225,29,46,.12),rgba(19,22,29,.9) 46%);
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:12px;
+  padding:13px 18px;transition:.15s}
+.crow:hover{transform:translateX(3px);border-left-color:var(--acc2)}
+.crow .per{font-family:Oswald,Impact,sans-serif;font-size:17px;color:var(--acc2);letter-spacing:.04em;white-space:nowrap}
+.crow .cn{font-weight:600;font-size:15px}
+.crow .cn small{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:1px}
+.crow .cw{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.crow .cw span{font-size:11px;border:1px solid var(--line);background:var(--bg2);border-radius:999px;padding:4px 11px;color:var(--dim);white-space:nowrap}
+.crow .cw span.tt{border-color:var(--acc);color:var(--acc2)}
+@media(max-width:760px){.crow{grid-template-columns:1fr;gap:8px}.crow .cw{justify-content:flex-start}}
+
 footer{padding:40px 0 60px;color:var(--dim);font-size:13px;border-top:1px solid var(--line)}
 footer a{color:var(--acc2)}
 @media(max-width:860px){
