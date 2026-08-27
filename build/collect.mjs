@@ -13,9 +13,9 @@ export const CFG = {
   photoPreview: 12,      // сколько свежих кадров показать на главной
   // подписи к сезонам, которые нельзя вычислить из цифр
   notes: {
-    "2025-26": "Серебро дивизиона. 1-е место на отборе, 2-е в регулярке, финал плей-офф",
-    "2024-25": "Самый тяжёлый сезон: 8-е место в регулярке, но 2 победы в плей-офф",
-    "2023-24": "2-е место на отборе в «Обероне», 4-е в регулярке «Урана»",
+    "2025-26": "1-е место на отборе, 2-е в регулярном чемпионате, финал Золотого плей-офф. 139 шайб — рекорд клуба",
+    "2024-25": "Тяжёлая регулярка, но победа в финале Серебряного плей-офф",
+    "2023-24": "Победа в матче за 3-е место — 5:2 над HC I ONE SPORT",
     "2022-23": "Дебютный сезон в «Трудовых Резервах»"
   }
 };
@@ -152,11 +152,37 @@ export async function collect() {
     v.g++; v.gf += a; v.ga += b;
     if (a > b) v.w++; else if (a < b) v.l++; else v.d++;
   }
+  /** чем закончился плей-офф: смотрим последний сыгранный матч стадии */
+  const playoffResult = (se) => {
+    const po = se.games
+      .filter((g) => g.status === "closed" && g.playoff_stage)
+      .sort((a, b) => String(a.datetime).localeCompare(String(b.datetime)));
+    const last = po[po.length - 1];
+    if (!last) return null;
+    const home = last.team_id === T;
+    const us = home ? last.team_score : last.competitor_team_score;
+    const them = home ? last.competitor_team_score : last.team_score;
+    const won = us > them;
+    const cup = last.tournament_playoff?.name || "";
+    const gold = /золот/i.test(cup);
+    const stage = last.playoff_stage;
+    if (/3/.test(stage)) return { medal: won ? "Бронза" : null, place: won ? 3 : 4, text: won ? "Матч за 3-е место выигран" : "Матч за 3-е место проигран" };
+    if (/финал/i.test(stage)) {
+      if (gold) return won ? { medal: "Золото", place: 1, text: "Победа в Золотом плей-офф" }
+                           : { medal: "Серебро", place: 2, text: "Финал Золотого плей-офф" };
+      return won ? { medal: null, place: null, text: "Победа в Серебряном плей-офф" }
+                 : { medal: null, place: null, text: "Финал Серебряного плей-офф" };
+    }
+    return { medal: null, place: null, text: stage + " плей-офф" };
+  };
+
   const SEASONS = seasons.map((se) => {
     const a = agg[se.s] || { g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0 };
     const t = teamTotals[se.s] || {};
+    const po = playoffResult(se);
     return {
-      s: se.s, div: se.division, place: se.place, ...a,
+      s: se.s, place: po ? po.place : null, medal: po ? po.medal : null, po: po ? po.text : "",
+      div: se.division || "", ...a,
       pim: t.penalty_minutes ?? 0, sog: t.shots_on_goal ?? 0, sh: t.shots ?? 0,
       fo: t.face_off_percent ?? 0, blk: t.block_shots ?? 0,
       note: CFG.notes[se.s] || (se.place ? `${se.place}-е место в дивизионе` : "Сезон идёт")
