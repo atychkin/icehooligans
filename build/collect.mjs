@@ -9,12 +9,8 @@ export const CFG = {
   leagueId: 12,
   teamId: 2750,
   teamPage: "https://hltr.ru/teams/2750",
-  gameUrl: (id) => `https://hltr.ru/games/${id}/statistic`,
-  playerUrl: (id) => `https://hltr.ru/player/${id}`,
-  achIcon: (alias, threshold) => `https://hltr.ru/assets/achievements/${alias}/${threshold}.png`,
-  photoPages: 21,        // сколько страниц медиаархива просматривать
-  photoPageStep: 5,      // брать каждую N-ю страницу — чтобы снимки были со всех сезонов
-  photoPerPage: 6,       // сколько фото брать с одной страницы
+  photoMaxPages: 200,    // предохранитель: страниц медиаархива по 100 фото
+  photoPreview: 12,      // сколько свежих кадров показать на главной
   // подписи к сезонам, которые нельзя вычислить из цифр
   notes: {
     "2025-26": "Серебро дивизиона. 1-е место на отборе, 2-е в регулярке, финал плей-офф",
@@ -230,18 +226,41 @@ export async function collect() {
     if (earned.length) ACH[nm] = earned;
   }
 
-  /* ---------- 8. фотоархив матчей ---------- */
-  const PHOTOS = [];
-  const seen = new Set();
-  for (let p = 1; p <= CFG.photoPages * CFG.photoPageStep; p += CFG.photoPageStep) {
+  /* ---------- 8. фотоархив: все снимки, сгруппированные по матчам ---------- */
+  const byGame = new Map();
+  const seenFiles = new Set();
+  let total = 0;
+  for (let p = 1; p <= CFG.photoMaxPages; p++) {
     let batch;
     try {
       batch = await get(`/league/${L}/media/?page=${p}&size=100&media_type=photo&team_id=${T}`);
     } catch { break; }
     if (!batch.length) break;
-    for (const m of batch.slice(0, CFG.photoPerPage)) {
+    for (const m of batch) {
       const f = fileOf(m.original_photo?.path);
-      if (f && !seen.has(f)) { seen.add(f); PHOTOS.push(f + "|" + m.game_id); }
+      if (!f || seenFiles.has(f)) continue;
+      seenFiles.add(f);
+      total++;
+      const id = String(m.game_id || "0");
+      if (!byGame.has(id)) byGame.set(id, { id, date: msk(m.created_at).slice(0, 10), files: [] });
+      byGame.get(id).files.push(f);
+    }
+    if (batch.length < 100) break;
+  }
+  const PHOTO_GAMES = [...byGame.values()];
+
+  /* дата матча точнее даты загрузки — подставим её там, где матч известен */
+  const gameDate = {};
+  for (const row of gameRows) { const c = row.split("|"); gameDate[c[6]] = c[1]; }
+  for (const g of PHOTO_GAMES) if (gameDate[g.id]) g.date = gameDate[g.id];
+  PHOTO_GAMES.sort((a, b) => b.date.localeCompare(a.date));
+
+  /* для главной — только свежие кадры, в формате «файл|id матча» */
+  const PHOTOS_PREVIEW = [];
+  outer: for (const g of PHOTO_GAMES) {
+    for (const f of g.files) {
+      if (PHOTOS_PREVIEW.length >= CFG.photoPreview) break outer;
+      PHOTOS_PREVIEW.push(f + "|" + g.id);
     }
   }
 
@@ -253,7 +272,8 @@ export async function collect() {
       division: seasons[0]?.division || "", coach, captain, assistants
     },
     GAMES: gameRows, UPCOMING: upcoming, SEASONS, TOTAL, TABLES,
-    PLAYERS: players, PHOTO, ACH, ACH_NAMES, ROSTER, PHOTOS,
+    PLAYERS: players, PHOTO, ACH, ACH_NAMES, ROSTER,
+    PHOTOS_PREVIEW, PHOTOS_TOTAL: total, PHOTO_GAMES,
     BUILT_AT: new Date().toISOString()
   };
 }

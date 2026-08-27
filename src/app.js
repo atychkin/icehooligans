@@ -1,9 +1,4 @@
-/* ================= RENDER ================= */
-const FS = "https://fs.mtgame.ru/";
-const $ = (s, r) => (r || document).querySelector(s);
-const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h !== undefined) e.innerHTML = h; return e; };
-const RU_M = ["янв","фев","мар","апр","мая","июн","июл","авг","сен","окт","ноя","дек"];
-function dfmt(iso){ const d = new Date(iso + "T12:00:00"); return d.getDate() + " " + RU_M[d.getMonth()] + " " + d.getFullYear(); }
+/* ================= ГЛАВНАЯ СТРАНИЦА ================= */
 function ufmt(v){ const m = v.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}:\d{2})$/); return m ? dfmt(m[1]+"-"+m[2]+"-"+m[3]) + ", " + m[4] : v; }
 function toi(sec){ const m = Math.round(sec/60); return Math.floor(m/60) + " ч " + String(m%60).padStart(2,"0") + " мин"; }
 
@@ -169,35 +164,23 @@ $("#tableTabs").addEventListener("click", e => {
 });
 renderTables();
 
-/* --- gallery --- */
-const photos = PHOTOS.map(r => { const [f,id] = r.split("|"); return { f, id, g: gameById[id] }; });
-$("#photoSub").textContent = "Кадры с матчей команды — " + photos.length +
-  " фотографий из медиаархива лиги (всего там больше 10 000 снимков с играми ICE HOOLIGANS).";
-$("#gal").innerHTML = photos.map((p,i) =>
-  '<button data-i="' + i + '"><img loading="lazy" src="' + FS + p.f + '" alt=""></button>').join("");
-
-const lb = $("#lb"), lbImg = $("#lb img"), lbCap = $("#lb .cap");
-let li = 0;
-function openLb(i){
-  li = (i + photos.length) % photos.length;
-  const p = photos[li];
-  lbImg.src = FS + p.f;
-  lbCap.textContent = p.g ? dfmt(p.g.date) + " · " + (p.g.ha === "H" ? "" : "@ ") + p.g.opp + " · " + p.g.gf + ":" + p.g.ga : "";
-  lb.classList.add("on");
-}
-$("#gal").addEventListener("click", e => { const b = e.target.closest("button"); if (b) openLb(+b.dataset.i); });
-$("#lb .x").onclick = () => lb.classList.remove("on");
-$("#lb .p").onclick = e => { e.stopPropagation(); openLb(li - 1); };
-$("#lb .n").onclick = e => { e.stopPropagation(); openLb(li + 1); };
-lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("on"); });
-document.addEventListener("keydown", e => {
-  if (!lb.classList.contains("on")) return;
-  if (e.key === "Escape") lb.classList.remove("on");
-  if (e.key === "ArrowLeft") openLb(li - 1);
-  if (e.key === "ArrowRight") openLb(li + 1);
+/* --- превью фотоархива (полная версия — на photos.html) --- */
+const preview = (typeof PHOTOS_PREVIEW !== "undefined" ? PHOTOS_PREVIEW : []);
+$("#photoSub").textContent = "Свежие кадры с матчей. Весь архив разложен по годам, месяцам и матчам — " +
+  (typeof PHOTOS_TOTAL !== "undefined" ? PHOTOS_TOTAL.toLocaleString("ru") + " фотографий." : "на отдельной странице.");
+$("#gal").innerHTML = preview.map((p, i) => {
+  const g = gameById[p.split("|")[1]];
+  return '<button data-i="' + i + '" title="' + (g ? dfmt(g.date) + " · " + g.opp : "") + '">' +
+    '<img loading="lazy" src="' + thumbUrl(p.split("|")[0]) + '" alt=""></button>';
+}).join("");
+$("#gal").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const i = +b.dataset.i, g = gameById[preview[i].split("|")[1]];
+  LB.open(preview.map(p => p.split("|")[0]), i, g ? dfmt(g.date) + " · " + g.opp + " · " + g.gf + ":" + g.ga : "");
 });
 
 const built = new Date(typeof BUILT_AT === "string" ? BUILT_AT : Date.now());
 $("#upd").textContent = "Данные обновлены " + built.getDate() + " " + RU_M[built.getMonth()] + " " + built.getFullYear() +
   ". В базе: " + games.length + " сыгранных матчей, " + parsePlayers("Карьера").length +
-  " игроков, " + photos.length + " фотографий. Страница пересобирается автоматически каждую ночь.";
+  " игроков, " + (typeof PHOTOS_TOTAL !== "undefined" ? PHOTOS_TOTAL.toLocaleString("ru") : preview.length) +
+  " фотографий. Страница пересобирается автоматически каждую ночь.";
