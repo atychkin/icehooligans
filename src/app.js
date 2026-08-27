@@ -14,9 +14,11 @@ const seasonsList = SEASONS.map(s => s.s);
 
 /* --- hero --- */
 $("#heroBadges").innerHTML = [
-  "Город: <b>" + TEAM.city + "</b>", "Лига: <b>ХЛ «Трудовые Резервы»</b>", "Дивизион: <b>" + TEAM.division + "</b>",
+  "Город: <b>" + TEAM.city + "</b>", "Основан: <b>сентябрь 2008</b>",
+  "Лига: <b>ХЛ «Трудовые Резервы»</b>",
+  TEAM.division ? "Дивизион: <b>" + TEAM.division.replace(/^Дивизион\s*/i, "") + "</b>" : "",
   "Капитан: <b>" + TEAM.captain + "</b>", "Тренер: <b>" + TEAM.coach + "</b>"
-].map(t => '<span class="badge">' + t + '</span>').join("");
+].filter(Boolean).map(t => '<span class="badge">' + t + '</span>').join("");
 
 const winPct = Math.round(TOTAL.w / TOTAL.g * 100);
 $("#heroTiles").innerHTML = [
@@ -26,14 +28,15 @@ $("#heroTiles").innerHTML = [
 ].map(t => '<div class="tile' + (t[2] ? " acc" : "") + '"><div class="v mono">' + t[1] + '</div><div class="k">' + t[0] + '</div></div>').join("");
 
 /* --- season cards --- */
+const MEDAL = { "Золото": "🥇", "Серебро": "🥈", "Бронза": "🥉" };
 $("#seasonCards").innerHTML = SEASONS.map(s => {
-  const pl = s.place
-    ? '<span class="badge" style="border-color:var(--acc);color:var(--acc2)">' + s.place + '-е место</span>'
-    : '<span class="badge">идёт</span>';
+  const pl = s.medal
+    ? '<span class="badge" style="border-color:var(--acc);color:var(--acc2)">' + MEDAL[s.medal] + " " + s.medal + '</span>'
+    : (s.po ? '<span class="badge">' + s.po + '</span>' : '<span class="badge">идёт</span>');
   const si = (v, k) => '<div class="si"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>';
   return '<div class="card">' +
     '<div class="shead"><h3>' + s.s + '</h3>' + pl + '</div>' +
-    '<div class="sdiv">' + s.div + '</div>' +
+    (s.div ? '<div class="sdiv">' + s.div + '</div>' : "") +
     '<div class="sstats">' + si(s.g, "игр") + si(s.w + "-" + s.d + "-" + s.l, "в-н-п") + si(s.gf + ":" + s.ga, "шайбы") + '</div>' +
     '<p class="snote">' + s.note + '</p></div>';
 }).join("");
@@ -148,7 +151,8 @@ let tabSeason = TABLES[0][0];
 function renderTables(){
   $("#tableBox").innerHTML = TABLES.filter(t => t[0] === tabSeason).map(t =>
     '<div><h3 style="font-size:17px;margin:10px 0 4px">' + t[1] + '</h3>' +
-    '<div class="sub" style="margin-bottom:10px">' + t[2] + '</div><div class="tblwrap"><table>' +
+    (t[2] ? '<div class="sub" style="margin-bottom:10px">' + t[2] + '</div>' : "") +
+    '<div class="tblwrap"><table>' +
     '<thead><tr><th class="l">#</th><th class="l">Команда</th><th>И</th><th>В</th><th>ВО</th><th>ПО</th><th>Н</th><th>П</th><th>О</th><th>Шайбы</th></tr></thead><tbody>' +
     t[3].map((r,i) => { const c = r.split("~");
       return '<tr' + (c[0].indexOf("ICE HOOLIGANS") >= 0 ? ' class="me"' : "") + '><td class="l">' + (i+1) + '</td><td class="l">' + c[0] + '</td>' +
