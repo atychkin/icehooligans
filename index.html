@@ -154,6 +154,21 @@ tr.me td{background:rgba(225,29,46,.10);font-weight:700}
 .tl h4{font-size:19px}
 .tl .y{color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em}
 
+/* тренерские эпохи */
+.coaches{display:grid;gap:10px;margin-top:4px}
+.crow{display:grid;grid-template-columns:120px 1fr auto;gap:18px;align-items:center;
+  background:linear-gradient(90deg,rgba(225,29,46,.12),rgba(19,22,29,.9) 46%);
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:12px;
+  padding:13px 18px;transition:.15s}
+.crow:hover{transform:translateX(3px);border-left-color:var(--acc2)}
+.crow .per{font-family:Oswald,Impact,sans-serif;font-size:17px;color:var(--acc2);letter-spacing:.04em;white-space:nowrap}
+.crow .cn{font-weight:600;font-size:15px}
+.crow .cn small{display:block;color:var(--dim);font-size:12px;font-weight:400;margin-top:1px}
+.crow .cw{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.crow .cw span{font-size:11px;border:1px solid var(--line);background:var(--bg2);border-radius:999px;padding:4px 11px;color:var(--dim);white-space:nowrap}
+.crow .cw span.tt{border-color:var(--acc);color:var(--acc2)}
+@media(max-width:760px){.crow{grid-template-columns:1fr;gap:8px}.crow .cw{justify-content:flex-start}}
+
 footer{padding:40px 0 60px;color:var(--dim);font-size:13px;border-top:1px solid var(--line)}
 footer a{color:var(--acc2)}
 @media(max-width:860px){
@@ -257,12 +272,29 @@ footer a{color:var(--acc2)}
       <p>Старт с победы 2:1 над ХК СБП — командой, которой уступили в прошлогоднем финале.</p></div>
   </div>
 
-  <h3 style="font-size:20px;margin:34px 0 14px">Тренеры клуба</h3>
-  <div class="grid cards3">
-    <div class="card"><div class="y" style="color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em">2008 — 2016</div><h4 style="font-size:17px;margin-top:6px">Громов Владислав Алексеевич</h4></div>
-    <div class="card"><div class="y" style="color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em">2016 — 2020</div><h4 style="font-size:17px;margin-top:6px">Шаламай Сергей Анатольевич</h4></div>
-    <div class="card"><div class="y" style="color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em">2020 — 2025</div><h4 style="font-size:17px;margin-top:6px">Тычкин Александр Александрович</h4></div>
-    <div class="card"><div class="y" style="color:var(--acc2);font-size:13px;font-weight:700;letter-spacing:.1em">2025 — н. в.</div><h4 style="font-size:17px;margin-top:6px">Сергеенко Георгий Алексеевич</h4></div>
+  <h3 style="font-size:20px;margin:34px 0 6px">За скамейкой</h3>
+  <p class="sub" style="margin-bottom:14px">Четыре тренерские эпохи клуба.</p>
+  <div class="coaches">
+    <div class="crow">
+      <div class="per">2008 — 2016</div>
+      <div class="cn">Громов Владислав Алексеевич<small>Первый тренер клуба</small></div>
+      <div class="cw"><span>8 сезонов</span><span>становление команды</span></div>
+    </div>
+    <div class="crow">
+      <div class="per">2016 — 2020</div>
+      <div class="cn">Шаламай Сергей Анатольевич<small>РТХЛ</small></div>
+      <div class="cw"><span class="tt">🏆 Чемпион РТХЛ 2016</span></div>
+    </div>
+    <div class="crow">
+      <div class="per">2020 — 2025</div>
+      <div class="cn">Тычкин Александр Александрович<small>РТХЛ, переход в «Трудовые Резервы»</small></div>
+      <div class="cw"><span class="tt">🏆 Чемпион РТХЛ 2020</span><span class="tt">🥉 Бронза 2023/24</span><span>Серебряный плей-офф 2024/25</span></div>
+    </div>
+    <div class="crow">
+      <div class="per">2025 — н. в.</div>
+      <div class="cn">Сергеенко Георгий Алексеевич<small>Действующий главный тренер</small></div>
+      <div class="cw"><span class="tt">🥈 Серебро 2025/26</span></div>
+    </div>
   </div>
 </div></section>
 <div id="lb"><span class="x">&times;</span><span class="arr p">&#8249;</span><span class="arr n">&#8250;</span><img alt=""><div class="cap"></div></div>
@@ -274,7 +306,7 @@ footer a{color:var(--acc2)}
 
 <script>
 /* Данные собраны автоматически из API ХЛ «Трудовые Резервы». Не редактировать вручную. */
-/* Обновлено: 2026-08-27T16:29:04.236Z */
+/* Обновлено: 2026-08-27T16:46:00.103Z */
 
 const TEAM = {
   "name": "HC ICE HOOLIGANS",
@@ -315,7 +347,7 @@ const PHOTOS_PREVIEW = ["_MG_6540_mijqt.jpg|157081","_MG_6538_6ucjL.jpg|157081",
 
 const PHOTOS_TOTAL = 10414;
 
-const BUILT_AT = "2026-08-27T16:29:04.236Z";
+const BUILT_AT = "2026-08-27T16:46:00.103Z";
 
 /* ================= ОБЩЕЕ: адреса файлов и просмотрщик ================= */
 const FS = "https://fs.mtgame.ru/";
