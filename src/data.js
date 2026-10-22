@@ -1,5 +1,5 @@
 /* Данные собраны автоматически из API ХЛ «Трудовые Резервы». Не редактировать вручную. */
-/* Обновлено: 2026-10-21T23:56:43.729Z */
+/* Обновлено: 2026-10-22T23:55:58.895Z */
 
 const TEAM = {
   "name": "HC ICE HOOLIGANS",
@@ -40,4 +40,4 @@ const PHOTOS_PREVIEW = ["litmosfoct2.JPG|161974","litmosfoct2-92.JPG|161974","li
 
 const PHOTOS_TOTAL = 11088;
 
-const BUILT_AT = "2026-10-21T23:56:43.729Z";
+const BUILT_AT = "2026-10-22T23:55:58.895Z";
