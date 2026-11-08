@@ -2,11 +2,15 @@ name: Обновление статистики
 
 on:
   schedule:
-    - cron: "0 21 * * *"   # 21:00 UTC = 00:00 по Москве
-  workflow_dispatch:        # кнопка «запустить сейчас» во вкладке Actions
+    # время в UTC, Москва = UTC+3
+    - cron: "0 21 * * 0-4"    # будни: каждую ночь в 00:00 МСК
+    - cron: "0 21-23 * * 5"   # ночь с пятницы на субботу, каждый час
+    - cron: "0 * * * 6"       # суббота целиком, каждый час
+    - cron: "0 0-20 * * 0"    # воскресенье до полуночи, каждый час
+  workflow_dispatch:          # кнопка «запустить сейчас» во вкладке Actions
   push:
     branches: [main]
-    paths: ["src/base-head.html", "src/app.js", "build/**"]
+    paths: ["src/**", "build/**", "!src/data.js", "!src/photos-data.js"]
 
 permissions:
   contents: write
@@ -38,4 +42,5 @@ jobs:
           git config user.email "actions@github.com"
           git add index.html src/data.js photos.html src/photos-data.js
           git commit -m "Статистика на $(date -u -d '+3 hours' '+%d.%m.%Y')"
+          git pull --rebase --autostash
           git push
