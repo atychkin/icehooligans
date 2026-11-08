@@ -90,7 +90,7 @@ $("#staffLine").textContent = [
 ].filter(Boolean).join(". ") + ".";
 $("#rosterGrid").innerHTML = ROSTER.map(p => {
   const ph = PHOTO[p[0]] || ["",0];
-  const img = ph[0] ? "background-image:url('" + FS + ph[0] + "')" : "";
+  const img = ph[0] ? "background-image:url('" + origUrl(ph[0]) + "')" : "";
   const link = ph[1] ? "https://hltr.ru/player/" + ph[1] : TEAM.leagueUrl;
   return '<a class="pcard" href="' + link + '" target="_blank" rel="noopener">' +
     '<div class="ph" style="' + img + '">' + (p[1] !== "" ? '<span class="no">' + p[1] + '</span>' : "") +
@@ -125,7 +125,7 @@ function buildTable(tblId, cols, rows, si, sd, onSort){
 }
 function photoName(n){
   const ph = PHOTO[n];
-  const img = ph && ph[0] ? '<img src="' + FS + ph[0] + '" alt="" style="width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:-8px;margin-right:8px">' : "";
+  const img = ph && ph[0] ? '<img src="' + origUrl(ph[0]) + '" alt="" style="width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:-8px;margin-right:8px">' : "";
   const nameHtml = ph && ph[1]
     ? '<a href="https://hltr.ru/player/' + ph[1] + '" target="_blank" rel="noopener" style="text-decoration:none">' + n + "</a>"
     : n;

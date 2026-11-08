@@ -1,13 +1,17 @@
 /* ================= ОБЩЕЕ: адреса файлов и просмотрщик ================= */
-const FS = "https://fs.mtgame.ru/";
+/* адрес файлового сервера лиги приходит вместе с данными (MEDIA_BASE);
+   если его нет или ссылка уже абсолютная — работаем и так */
+const FS = (typeof MEDIA_BASE === "string" && MEDIA_BASE) || "https://fs.mtgame.ru/";
 const RU_M = ["янв","фев","мар","апр","мая","июн","июл","авг","сен","окт","ноя","дек"];
 const RU_MONTH = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
 const $ = (s, r) => (r || document).querySelector(s);
 
 /* лига хранит рядом с оригиналом уменьшенные копии */
-const thumbUrl = (f) => FS + f.replace(/(\.[^.]+)$/, "_500x500$1");
-const bigUrl = (f) => FS + f.replace(/(\.[^.]+)$/, "_1920x1080$1");
-const origUrl = (f) => FS + f;
+const fileUrl = (f) => /^https?:\/\//.test(f) ? f : FS + f;
+const sized = (f, s) => fileUrl(f).replace(/(\.[^./]+)$/, s + "$1");
+const thumbUrl = (f) => sized(f, "_500x500");
+const bigUrl = (f) => sized(f, "_1920x1080");
+const origUrl = (f) => fileUrl(f);
 
 function dfmt(iso){
   const d = new Date(iso + "T12:00:00");
