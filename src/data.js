@@ -1,5 +1,5 @@
 /* Данные собраны автоматически из API ХЛ «Трудовые Резервы». Не редактировать вручную. */
-/* Обновлено: 2026-11-12T02:04:01.112Z */
+/* Обновлено: 2026-11-13T01:35:05.942Z */
 
 const TEAM = {
   "name": "HC ICE HOOLIGANS",
@@ -40,4 +40,4 @@ const PHOTOS_PREVIEW = ["https://i.mtgame.ru/000_2258.jpg|161984","https://i.mtg
 
 const PHOTOS_TOTAL = 11228;
 
-const BUILT_AT = "2026-11-12T02:04:01.112Z";
+const BUILT_AT = "2026-11-13T01:35:05.942Z";
