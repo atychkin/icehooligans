@@ -1,5 +1,5 @@
 /* Данные собраны автоматически из API ХЛ «Трудовые Резервы». Не редактировать вручную. */
-/* Обновлено: 2026-11-21T01:55:45.041Z */
+/* Обновлено: 2026-11-21T05:15:27.133Z */
 
 const TEAM = {
   "name": "HC ICE HOOLIGANS",
@@ -40,4 +40,4 @@ const PHOTOS_PREVIEW = ["https://i.mtgame.ru/yaro-01201_sZLR6.JPG|161982","https
 
 const PHOTOS_TOTAL = 11328;
 
-const BUILT_AT = "2026-11-21T01:55:45.041Z";
+const BUILT_AT = "2026-11-21T05:15:27.133Z";
